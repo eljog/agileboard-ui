@@ -12,13 +12,13 @@ import AppBar from "./AppBar";
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    width: "80%",
-    marginLeft: "10%",
+    width: "90vw",
+    marginLeft: "5vw",
     marginTop: "5px",
     minHeight: "100vh"
   },
-  row: {
-    width: "100%",
+  column: {
+    minWidth: "18vw",
     minHeight: "100%"
   },
   paper: {
@@ -60,6 +60,7 @@ class GuttersGrid extends Component {
           appendNewStory={this.appendNewStory}
           teamMembers={this.state.teamMembers}
           statusColumns={columns}
+          loginState={this.props.loginState}
         />
         <Grid
           container
@@ -69,7 +70,7 @@ class GuttersGrid extends Component {
           wrap="nowrap"
         >
           {columns.map(column => (
-            <Grid key={column.key} className={classes.row} item>
+            <Grid key={column.key} className={classes.column} item>
               <Paper className={classes.paper}>
                 <Typography
                   gutterBottom
@@ -91,6 +92,7 @@ class GuttersGrid extends Component {
                     teamMembers={this.state.teamMembers}
                     statusColumns={columns}
                     refreshUpdatedStory={this.refreshUpdatedStory}
+                    loginState={this.props.loginState}
                   />
                 ))}
               </Paper>
@@ -125,15 +127,27 @@ class GuttersGrid extends Component {
   };
 
   fetchStories = () => {
+    var config = {
+      headers: {
+        "content-type": "application/json",
+        authorization: `${this.props.loginState.token}`
+      }
+    };
+
     const query = `query { 
         getStories {
-        id
-        name
-        details
-        status
-        owner {
-            name
+          id
+          name
+          details
+          status
+          points
+          owner {
+              name
+              id
+            }
+          project {
             id
+            name
           }
         }
     }`;
@@ -145,7 +159,7 @@ class GuttersGrid extends Component {
     };
 
     axios
-      .post(`http://localhost:8889/graphql`, data)
+      .post(`http://localhost:8889/graphql`, data, config)
       .then(res => {
         console.log(res.data.data.getStories);
         this.setState({ stories: res.data.data.getStories });
@@ -155,9 +169,16 @@ class GuttersGrid extends Component {
       });
   };
 
-  fetchUsers = () => {
+  fetchProjectMembers = () => {
+    var config = {
+      headers: {
+        "content-type": "application/json",
+        authorization: `${this.props.loginState.token}`
+      }
+    };
+
     const query = `query { 
-      getUsers {
+      getUsersByProject(projectId: ${this.props.loginState.project.id}) {
         id
         name
       }
@@ -170,10 +191,10 @@ class GuttersGrid extends Component {
     };
 
     axios
-      .post(`http://localhost:8889/graphql`, data)
+      .post(`http://localhost:8889/graphql`, data, config)
       .then(res => {
-        console.log(res.data.data.getUsers);
-        this.setState({ teamMembers: res.data.data.getUsers });
+        console.log(res.data.data.getUsersByProject);
+        this.setState({ teamMembers: res.data.data.getUsersByProject });
       })
       .catch(err => {
         console.log("GraphQL Error: " + err.message);
@@ -182,7 +203,7 @@ class GuttersGrid extends Component {
 
   componentDidMount() {
     this.fetchStories();
-    this.fetchUsers();
+    this.fetchProjectMembers();
   }
 }
 

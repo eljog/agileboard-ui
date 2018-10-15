@@ -51,24 +51,28 @@ function Transition(props) {
 }
 
 class CreateStoryDialog extends Component {
-  state = {
-    open: false,
-    storyForm: {
-      name: "",
-      owner: "1",
-      details: "",
-      status: "New"
-    }
-  };
-
-  // constructor(props) {
-  //   super(props);
-  //   const storyForm = (this.state = { open: false, storyForm: storyForm });
-  // }
-
   static propTypes = {
     classes: PropTypes.object.isRequired
   };
+
+  state = {
+    open: false,
+    storyForm: {}
+  };
+
+  constructor(props) {
+    super(props);
+    console.log(JSON.stringify(props));
+    const storyForm = {
+      name: "",
+      owner: `${this.props.loginState.currrentUser.id}`,
+      details: "",
+      status: "New",
+      projectId: `${this.props.loginState.currrentUser.project.id}`,
+      points: 0
+    };
+    this.state = { open: false, storyForm: storyForm };
+  }
 
   handleClickOpen = () => {
     this.setState({ open: true });
@@ -79,9 +83,11 @@ class CreateStoryDialog extends Component {
       open: false,
       storyForm: {
         name: "",
-        owner: "1",
+        owner: `${this.props.loginState.currrentUser.id}`,
         details: "",
-        status: "New"
+        status: "New",
+        projectId: `${this.props.loginState.currrentUser.project.id}`,
+        points: 0
       }
     });
   };
@@ -96,6 +102,14 @@ class CreateStoryDialog extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+
+    var config = {
+      headers: {
+        "content-type": "application/json",
+        authorization: `${this.props.loginState.token}`
+      }
+    };
+
     console.log(this.state.storyForm);
 
     const query = `mutation CreateStory($input: StoryInput!) {
@@ -104,7 +118,12 @@ class CreateStoryDialog extends Component {
           name
           details
           status
+          points
           owner {
+            id
+            name
+          }
+          project {
             id
             name
           }
@@ -114,7 +133,9 @@ class CreateStoryDialog extends Component {
           "name": "${this.state.storyForm.name}",
           "details":  "${this.state.storyForm.details}",
           "ownerId":   ${this.state.storyForm.owner},
-          "status": "${this.state.storyForm.status}"
+          "status": "${this.state.storyForm.status}",
+          "points": "${this.state.storyForm.points}",
+          "projectId": "${this.state.storyForm.projectId}"
         }
       }`;
 
@@ -124,7 +145,7 @@ class CreateStoryDialog extends Component {
     };
 
     axios
-      .post(`http://localhost:8889/graphql`, data)
+      .post(`http://localhost:8889/graphql`, data, config)
       .then(res => {
         console.log("Story created: " + res.data.data.createStory);
         const story = res.data.data.createStory;
@@ -236,6 +257,14 @@ class CreateStoryDialog extends Component {
                 })}
               </Select>
             </FormControl>
+            <TextField
+              required
+              id="story-points"
+              label="Points"
+              className={classes.textField}
+              value={this.state.storyForm.points}
+              onChange={this.handleChange("points")}
+            />
             <TextField
               fullWidth
               required

@@ -8,6 +8,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import EditStoryDialog from "./EditStoryDialog";
+import Badge from "@material-ui/core/Badge";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
 const theme = createMuiTheme({
@@ -18,8 +19,9 @@ const theme = createMuiTheme({
 
 const styles = theme => ({
   card: {
-    maxWidth: "350px",
-    margin: "5px"
+    maxWidth: "15vw",
+    minWidth: "15vw",
+    marginBottom: "1vh"
   },
 
   media: {
@@ -28,6 +30,28 @@ const styles = theme => ({
 
   avatar: {
     backgroundColor: "red"
+  },
+
+  margin: {},
+
+  padding: {
+    padding: `0 ${theme.spacing.unit * 2}px`
+  },
+
+  text: {
+    wordWrap: "break-word"
+  },
+
+  badge: {
+    top: 1,
+    right: -15,
+    // margin: theme.spacing.unit * -10,
+    // The border color match the background color.
+    border: `6px solid ${
+      theme.palette.type === "light"
+        ? theme.palette.grey[200]
+        : theme.palette.grey[900]
+    }`
   }
 });
 
@@ -45,35 +69,45 @@ class StoryCard extends Component {
 
     return (
       <MuiThemeProvider theme={theme}>
-        <Card className={classes.card}>
-          <CardHeader
-            avatar={
-              <Avatar aria-label="Recipe" className={classes.avatar}>
-                <img
-                  src={`https://placeimg.com/6${
-                    this.props.story.owner.id
-                  }/120/people`}
-                  alt=""
+        {/* <Badge color="primary" badgeContent={4} className={classes.margin}> */}
+        <Badge
+          badgeContent={this.props.story.points}
+          color="primary"
+          classes={{ badge: classes.badge }}
+        >
+          <Card className={classes.card}>
+            <CardHeader
+              avatar={
+                <Avatar aria-label="Recipe" className={classes.avatar}>
+                  <img
+                    src={`https://placeimg.com/6${
+                      this.props.story.owner.id
+                    }/120/people`}
+                    alt=""
+                  />
+                </Avatar>
+              }
+              title={"Story " + this.props.id}
+              subheader={this.props.ownerName}
+              action={
+                <EditStoryDialog
+                  story={this.props.story}
+                  teamMembers={this.props.teamMembers}
+                  statusColumns={this.props.statusColumns}
+                  refreshUpdatedStory={this.props.refreshUpdatedStory}
+                  loginState={this.props.loginState}
                 />
-              </Avatar>
-            }
-            title={"Story " + this.props.id}
-            subheader={this.props.ownerName}
-            action={
-              <EditStoryDialog
-                story={this.props.story}
-                teamMembers={this.props.teamMembers}
-                statusColumns={this.props.statusColumns}
-                refreshUpdatedStory={this.props.refreshUpdatedStory}
-              />
-            }
-          />
-          <CardActionArea>
-            <CardContent>
-              <Typography>{this.props.name}</Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
+              }
+            />
+            <CardActionArea>
+              <CardContent>
+                <Typography align="justify" className={classes.text}>
+                  {this.props.name}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        </Badge>
       </MuiThemeProvider>
     );
   }
