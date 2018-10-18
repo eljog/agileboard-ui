@@ -10,5 +10,5 @@ hooks:
       runas: ec2-user
   AfterInstall:
     - location: scripts/start_server
-      timeout: 900
+      timeout: 3600
       runas: ec2-user
