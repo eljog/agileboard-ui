@@ -5,10 +5,10 @@ files:
     destination: /var/www/html/
 hooks:
   BeforeInstall:
-    - location: deploy/before_install
+    - location: scripts/install_dependencies
       timeout: 300
       runas: eljo
   AfterInstall:
-    - location: deploy/restart_server
-      timeout: 300
+    - location: scripts/start_server
+      timeout: 900
       runas: eljo
