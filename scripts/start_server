@@ -1,4 +1,4 @@
 #!/bin/bash
 cd /var/www/html/
-npm install
-npm start
+sudo npm install
+sudo npm start
