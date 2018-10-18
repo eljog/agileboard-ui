@@ -1,4 +1,4 @@
 #!/bin/bash
-cd /var/www/html/
+cd /home/ec2-user
 sudo npm install
 sudo npm start
