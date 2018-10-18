@@ -7,8 +7,8 @@ hooks:
   BeforeInstall:
     - location: scripts/install_dependencies
       timeout: 300
-      runas: eljo
+      runas: ec2-user
   AfterInstall:
     - location: scripts/start_server
       timeout: 900
-      runas: eljo
+      runas: ec2-user
