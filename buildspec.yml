@@ -16,4 +16,5 @@ phases:
       - echo Build completed on `date`
 artifacts:
   files:
-    - build/
+    - build/*
+    - appspec.yml
