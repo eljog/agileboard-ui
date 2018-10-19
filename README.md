@@ -1,5 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+![CodeBuild badge](https://codebuild.us-east-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoidldJaTdWYVFnUWpDSkxLUmtuSHlPUE03c084elRlWlpJU29nTmgvR1dOZVU1WlBRdGJRUmZibkJuODNnNmNxaVp6cFREK0ZSSkVoeml4V3F4Nm42YWlvPSIsIml2UGFyYW1ldGVyU3BlYyI6ImgrZDVwQUJpR0dHbklIb3ciLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 Below you will find some information on how to perform common tasks.<br>
 You can find the most recent version of this guide [here](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
