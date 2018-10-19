@@ -51,13 +51,18 @@ const styles = theme => ({
   },
   submit: {
     marginTop: theme.spacing.unit * 3
+  },
+
+  error: {
+    color: "red"
   }
 });
 
 class Login extends Component {
   state = {
     usernameOrEmail: "",
-    password: ""
+    password: "",
+    error: ""
   };
 
   static propTypes = {
@@ -78,6 +83,11 @@ class Login extends Component {
       })
       .catch(err => {
         console.log("Login Failed: " + err.message);
+        let errorMessage = err.message;
+        if (err.response !== undefined) {
+          errorMessage = err.response["data"]["message"];
+        }
+        this.setState({ error: "❌" + errorMessage });
       });
   };
 
@@ -94,12 +104,12 @@ class Login extends Component {
         <CssBaseline />
         <main className={classes.layout}>
           <Paper className={classes.paper}>
+            <Typography component="h5" variant="h5">
+              Simply Agile!
+            </Typography>
             <Avatar className={classes.avatar}>
               <LockIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
             <form className={classes.form} onSubmit={this.login}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="email">
@@ -127,6 +137,9 @@ class Login extends Component {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
+
+              <span className={classes.error}>{this.state.error}</span>
+
               <Button
                 type="submit"
                 fullWidth

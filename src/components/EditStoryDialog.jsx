@@ -59,8 +59,10 @@ class EditStoryDialog extends Component {
       owner: null,
       details: null,
       status: null,
-      points: null
-    }
+      points: null,
+      project: null
+    },
+    error: null
   };
 
   constructor(props) {
@@ -69,7 +71,7 @@ class EditStoryDialog extends Component {
       id: props.story.id,
       name: props.story.name,
       owner: props.story.owner.id,
-      details: props.story.details,
+      details: props.story.details.replace("\\\\n", "\n"),
       status: props.story.status,
       points: props.story.points,
       project: props.story.project.id
@@ -91,6 +93,11 @@ class EditStoryDialog extends Component {
 
   handleChange = field => event => {
     const storyForm = this.state.storyForm;
+    // Allow Only numbers for Story points
+    if (field === "points") {
+      event.target.value.replace(/[^0-9]/g, "");
+    }
+
     storyForm[field] = event.target.value;
     this.setState({
       storyForm: storyForm
@@ -126,20 +133,22 @@ class EditStoryDialog extends Component {
           }
         }
       }`;
-    const variables = `{"input": {
-         "id": ${this.state.storyForm.id},
-          "name": "${this.state.storyForm.name}",
-          "details":  "${this.state.storyForm.details}",
-          "ownerId":   ${this.state.storyForm.owner},
-          "status": "${this.state.storyForm.status}",
-          "points": ${this.state.storyForm.points},
-          "projectId": ${this.state.storyForm.project}
-        }
-      }`;
+
+    const variables = {
+      input: {
+        id: this.state.storyForm.id,
+        name: this.state.storyForm.name,
+        details: this.state.storyForm.details,
+        ownerId: this.state.storyForm.owner,
+        status: this.state.storyForm.status,
+        points: this.state.storyForm.points,
+        projectId: this.state.storyForm.project
+      }
+    };
 
     let data = {
       query: query,
-      variables: variables
+      variables: JSON.stringify(variables)
     };
 
     axios
@@ -149,14 +158,20 @@ class EditStoryDialog extends Component {
           "Story Updated: " + JSON.stringify(res.data.data.updateStory)
         );
         const story = res.data.data.updateStory;
-        if (story === null) {
-          throw res.data.errors[0];
+        if (story === null && res !== null) {
+          this.setState({
+            error: "❌ " + res["data"]["errors"][0]["exception"]["message"]
+          });
+        } else {
+          this.props.refreshUpdatedStory(res.data.data.updateStory);
+          this.handleClose();
         }
-        this.props.refreshUpdatedStory(res.data.data.updateStory);
-        this.handleClose();
       })
       .catch(err => {
         console.log("GraphQL Error while updating story: " + err.message);
+        this.setState({
+          error: "❌ " + err.message
+        });
       });
   };
 
@@ -201,6 +216,7 @@ class EditStoryDialog extends Component {
               required
               id="story-name"
               label="Name"
+              inputProps={{ maxLength: 250 }}
               className={classes.textField}
               value={this.state.storyForm.name}
               onChange={this.handleChange("name")}
@@ -263,6 +279,7 @@ class EditStoryDialog extends Component {
               required
               id="story-points"
               label="Points"
+              inputProps={{ maxLength: 3 }}
               className={classes.textField}
               value={this.state.storyForm.points}
               onChange={this.handleChange("points")}
@@ -281,6 +298,16 @@ class EditStoryDialog extends Component {
               onChange={this.handleChange("details")}
               margin="normal"
             />
+
+            <FormControl
+              fullWidth
+              error={true}
+              component="fieldset"
+              margin="dense"
+            >
+              <span className={classes.error}>{this.state.error}</span>
+              {/* <FormHelperText>{this.state.error}</FormHelperText> */}
+            </FormControl>
 
             <Button
               variant="contained"

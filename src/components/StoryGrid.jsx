@@ -126,7 +126,7 @@ class GuttersGrid extends Component {
     this.setState({ stories: stories });
   };
 
-  fetchStories = () => {
+  fetchStoriesForProject = () => {
     var config = {
       headers: {
         "content-type": "application/json",
@@ -135,7 +135,7 @@ class GuttersGrid extends Component {
     };
 
     const query = `query { 
-        getStories {
+      getStoriesByProject(projectId: ${this.props.loginState.project.id}) {
           id
           name
           details
@@ -161,8 +161,8 @@ class GuttersGrid extends Component {
     axios
       .post(`http://localhost:8889/graphql`, data, config)
       .then(res => {
-        console.log(res.data.data.getStories);
-        this.setState({ stories: res.data.data.getStories });
+        console.log(res.data.data.getStoriesByProject);
+        this.setState({ stories: res.data.data.getStoriesByProject });
       })
       .catch(err => {
         console.log("GraphQL Error: " + err.message);
@@ -202,7 +202,7 @@ class GuttersGrid extends Component {
   };
 
   componentDidMount() {
-    this.fetchStories();
+    this.fetchStoriesForProject();
     this.fetchProjectMembers();
   }
 }
