@@ -9,8 +9,6 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Performing npm module installation
-      - npm install
       - echo Running npm build...
       - npm run build
   post_build:
