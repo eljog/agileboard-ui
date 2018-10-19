@@ -1,9 +1,16 @@
 version: 0.1
 
 phases:
+  pre_build:
+    commands:
+      - echo Pre-build started on `date`
+      - echo Performing npm module installation
+      - npm install
   build:
     commands:
       - echo Build started on `date`
+      - echo Performing npm module installation
+      - npm install
       - echo Running npm build...
       - npm run build
   post_build:
