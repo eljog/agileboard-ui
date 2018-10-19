@@ -110,6 +110,7 @@ class MainAppBar extends Component {
               appendNewStory={this.props.appendNewStory}
               teamMembers={this.props.teamMembers}
               statusColumns={this.props.statusColumns}
+              loginState={this.props.loginState}
             />
             <div className={classes.search}>
               <div className={classes.searchIcon}>

@@ -15,7 +15,8 @@ import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import axios from "axios";
-import { FormControl } from "@material-ui/core";
+import { FormControl, Divider } from "@material-ui/core";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 const styles = theme => ({
   appBar: {
@@ -43,6 +44,9 @@ const styles = theme => ({
   },
   menu: {
     width: 200
+  },
+  error: {
+    color: "red"
   }
 });
 
@@ -51,24 +55,29 @@ function Transition(props) {
 }
 
 class CreateStoryDialog extends Component {
-  state = {
-    open: false,
-    storyForm: {
-      name: "",
-      owner: "1",
-      details: "",
-      status: "New"
-    }
-  };
-
-  // constructor(props) {
-  //   super(props);
-  //   const storyForm = (this.state = { open: false, storyForm: storyForm });
-  // }
-
   static propTypes = {
     classes: PropTypes.object.isRequired
   };
+
+  state = {
+    open: false,
+    storyForm: {},
+    error: null
+  };
+
+  constructor(props) {
+    super(props);
+    console.log(JSON.stringify(props));
+    const storyForm = {
+      name: "",
+      owner: `${this.props.loginState.currrentUser.id}`,
+      details: "",
+      status: "New",
+      project: `${this.props.loginState.currrentUser.project.id}`,
+      points: 0
+    };
+    this.state = { open: false, storyForm: storyForm };
+  }
 
   handleClickOpen = () => {
     this.setState({ open: true });
@@ -79,15 +88,21 @@ class CreateStoryDialog extends Component {
       open: false,
       storyForm: {
         name: "",
-        owner: "1",
+        owner: `${this.props.loginState.currrentUser.id}`,
         details: "",
-        status: "New"
+        status: "New",
+        project: `${this.props.loginState.currrentUser.project.id}`,
+        points: 0
       }
     });
   };
 
   handleChange = field => event => {
     const storyForm = this.state.storyForm;
+    // Allow Only numbers for Story points
+    if (field === "points") {
+      event.target.value.replace(/[^0-9]/g, "");
+    }
     storyForm[field] = event.target.value;
     this.setState({
       storyForm: storyForm
@@ -96,6 +111,14 @@ class CreateStoryDialog extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+
+    var config = {
+      headers: {
+        "content-type": "application/json",
+        authorization: `${this.props.loginState.token}`
+      }
+    };
+
     console.log(this.state.storyForm);
 
     const query = `mutation CreateStory($input: StoryInput!) {
@@ -104,38 +127,53 @@ class CreateStoryDialog extends Component {
           name
           details
           status
+          points
           owner {
+            id
+            name
+          }
+          project {
             id
             name
           }
         }
       }`;
-    const variables = `{"input": {
-          "name": "${this.state.storyForm.name}",
-          "details":  "${this.state.storyForm.details}",
-          "ownerId":   ${this.state.storyForm.owner},
-          "status": "${this.state.storyForm.status}"
-        }
-      }`;
+
+    const variables = {
+      input: {
+        name: this.state.storyForm.name,
+        details: this.state.storyForm.details,
+        ownerId: this.state.storyForm.owner,
+        status: this.state.storyForm.status,
+        points: this.state.storyForm.points,
+        projectId: this.state.storyForm.project
+      }
+    };
 
     let data = {
       query: query,
-      variables: variables
+      variables: JSON.stringify(variables)
     };
 
     axios
-      .post(`http://localhost:8889/graphql`, data)
+      .post(`http://localhost:8889/graphql`, data, config)
       .then(res => {
         console.log("Story created: " + res.data.data.createStory);
         const story = res.data.data.createStory;
-        if (story === null) {
-          throw res.data.errors[0];
+        if (story === null && res !== null) {
+          this.setState({
+            error: "❌ " + res["data"]["errors"][0]["exception"]["message"]
+          });
+        } else {
+          this.props.appendNewStory(res.data.data.createStory);
+          this.handleClose();
         }
-        this.props.appendNewStory(res.data.data.createStory);
-        this.handleClose();
       })
       .catch(err => {
         console.log("GraphQL Error while creating story: " + err.message);
+        this.setState({
+          error: "❌ " + err.message
+        });
       });
   };
 
@@ -180,6 +218,7 @@ class CreateStoryDialog extends Component {
               required
               id="story-name"
               label="Name"
+              inputProps={{ maxLength: 250 }}
               className={classes.textField}
               value={this.state.storyForm.name}
               onChange={this.handleChange("name")}
@@ -237,6 +276,15 @@ class CreateStoryDialog extends Component {
               </Select>
             </FormControl>
             <TextField
+              required
+              id="story-points"
+              label="Points"
+              inputProps={{ maxLength: 3 }}
+              className={classes.textField}
+              value={this.state.storyForm.points}
+              onChange={this.handleChange("points")}
+            />
+            <TextField
               fullWidth
               required
               multiline
@@ -249,6 +297,15 @@ class CreateStoryDialog extends Component {
               onChange={this.handleChange("details")}
               margin="normal"
             />
+            <FormControl
+              fullWidth
+              error={true}
+              component="fieldset"
+              margin="dense"
+            >
+              <span className={classes.error}>{this.state.error}</span>
+              {/* <FormHelperText>{this.state.error}</FormHelperText> */}
+            </FormControl>
             <Button
               variant="contained"
               color="primary"
