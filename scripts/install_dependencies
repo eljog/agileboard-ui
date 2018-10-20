@@ -1,4 +1,2 @@
 #!/bin/bash
-curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
-sudo yum -y install nodejs
-sudo yum -y install gcc-c++ make
+yum install -y httpd
