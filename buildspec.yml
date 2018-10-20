@@ -9,8 +9,8 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Running npm build...
-      - npm run build
+      - echo Running npm build for AWS...
+      - npm run buildAWS
   post_build:
     commands:
       - echo Build completed on `date`
