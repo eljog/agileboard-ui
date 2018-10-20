@@ -13,6 +13,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "buildAWS": "npm run build && cp appspec.yml build/appspec.yml",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
