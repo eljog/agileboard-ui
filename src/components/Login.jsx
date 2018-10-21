@@ -14,6 +14,7 @@ import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import axios from "axios";
+import API_URL from "../ApiAdapter";
 
 const theme = createMuiTheme({
   typography: {
@@ -76,7 +77,7 @@ class Login extends Component {
     bodyFormData.set("password", this.state.password);
 
     axios
-      .post(`http://localhost:8889/auth/signin`, bodyFormData)
+      .post(`${API_URL}/auth/signin`, bodyFormData)
       .then(res => {
         console.log("LoggedIn: " + res.data);
         this.props.setLogin({ status: true, token: "Bearer " + res.data });

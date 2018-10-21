@@ -17,6 +17,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import axios from "axios";
 import { FormControl, Divider } from "@material-ui/core";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import API_URL from "../ApiAdapter";
 
 const styles = theme => ({
   appBar: {
@@ -156,7 +157,7 @@ class CreateStoryDialog extends Component {
     };
 
     axios
-      .post(`http://localhost:8889/graphql`, data, config)
+      .post(`${API_URL}/graphql`, data, config)
       .then(res => {
         console.log("Story created: " + res.data.data.createStory);
         const story = res.data.data.createStory;

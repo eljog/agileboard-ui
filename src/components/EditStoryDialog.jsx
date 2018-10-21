@@ -16,6 +16,7 @@ import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import axios from "axios";
 import { FormControl } from "@material-ui/core";
+import API_URL from "../ApiAdapter";
 
 const styles = theme => ({
   appBar: {
@@ -152,7 +153,7 @@ class EditStoryDialog extends Component {
     };
 
     axios
-      .post(`http://localhost:8889/graphql`, data, config)
+      .post(`${API_URL}/graphql`, data, config)
       .then(res => {
         console.log(
           "Story Updated: " + JSON.stringify(res.data.data.updateStory)
