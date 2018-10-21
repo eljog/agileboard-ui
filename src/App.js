@@ -4,6 +4,7 @@ import "./App.css";
 import StoryGrid from "./components/StoryGrid";
 import Login from "./components/Login";
 import axios from "axios";
+import API_URL from "./ApiAdapter";
 
 class App extends Component {
   state = {
@@ -23,7 +24,7 @@ class App extends Component {
     };
 
     axios
-      .get(`http://localhost:8889/user/me`, config)
+      .get(`${API_URL}/user/me`, config)
       .then(res => {
         loginState.currrentUser = res.data;
         loginState.project = loginState.currrentUser.project;

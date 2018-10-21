@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import grey from "@material-ui/core/colors/grey";
 import axios from "axios";
 import AppBar from "./AppBar";
+import API_URL from "../ApiAdapter";
 
 const styles = theme => ({
   root: {
@@ -159,7 +160,7 @@ class GuttersGrid extends Component {
     };
 
     axios
-      .post(`http://localhost:8889/graphql`, data, config)
+      .post(`${API_URL}/graphql`, data, config)
       .then(res => {
         console.log(res.data.data.getStoriesByProject);
         this.setState({ stories: res.data.data.getStoriesByProject });
@@ -191,7 +192,7 @@ class GuttersGrid extends Component {
     };
 
     axios
-      .post(`http://localhost:8889/graphql`, data, config)
+      .post(`${API_URL}/graphql`, data, config)
       .then(res => {
         console.log(res.data.data.getUsersByProject);
         this.setState({ teamMembers: res.data.data.getUsersByProject });
