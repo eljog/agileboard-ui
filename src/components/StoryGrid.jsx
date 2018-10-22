@@ -57,7 +57,7 @@ class GuttersGrid extends Component {
     return (
       <div>
         <AppBar
-          fetchStories={this.fetchStories}
+          fetchStories={this.fetchStoriesForProject}
           appendNewStory={this.appendNewStory}
           teamMembers={this.state.teamMembers}
           statusColumns={columns}

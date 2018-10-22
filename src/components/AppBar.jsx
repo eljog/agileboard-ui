@@ -103,8 +103,8 @@ class MainAppBar extends Component {
               Kanban Story Board
             </Typography>
             <div className={classes.grow} />
-            <IconButton color="inherit">
-              <RefreshIcon onClick={this.props.fetchStories} />
+            <IconButton color="inherit" onClick={this.props.fetchStories}>
+              <RefreshIcon />
             </IconButton>
             <CreateStoryDialog
               appendNewStory={this.props.appendNewStory}
