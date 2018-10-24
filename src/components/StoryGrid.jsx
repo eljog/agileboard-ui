@@ -40,11 +40,6 @@ class GuttersGrid extends Component {
     classes: PropTypes.object.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    console.log("Props: " + JSON.stringify(props));
-  }
-
   render() {
     const { classes } = this.props;
 

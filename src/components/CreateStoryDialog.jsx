@@ -238,7 +238,7 @@ class CreateStoryDialog extends Component {
                 onChange={this.handleChange("owner")}
                 value={this.state.storyForm.owner}
               >
-                {this.props.teamMembers.map(member => {
+                {this.props.teamMembers().map(member => {
                   console.log(member.name);
                   return (
                     <MenuItem

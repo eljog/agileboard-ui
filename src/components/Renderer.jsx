@@ -19,10 +19,11 @@ class Renderer extends Component {
   };
 
   render() {
+    console.log("Eljo:" + JSON.stringify(this.state));
     return (
       <PersistentDrawer
         loginState={this.props.loginState}
-        teamMembers={this.state.teamMembers}
+        teamMembers={this.getTeamMembers}
         statusColumns={columns}
         refreshUpdatedStory={this.refreshUpdatedStory}
         loginState={this.props.loginState}
@@ -34,6 +35,10 @@ class Renderer extends Component {
       />
     );
   }
+
+  getTeamMembers = () => {
+    return this.state.teamMembers;
+  };
 
   filterStoriesByStatus = status => {
     const newStories = this.state.stories.filter(story => {
@@ -133,8 +138,6 @@ class Renderer extends Component {
         console.log("GraphQL Error: " + err.message);
       });
   };
-
-  componentWillMount() {}
 
   componentDidMount() {
     this.fetchStoriesForProject();

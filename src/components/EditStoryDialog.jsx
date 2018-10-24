@@ -235,7 +235,7 @@ class EditStoryDialog extends Component {
                 onChange={this.handleChange("owner")}
                 value={this.state.storyForm.owner}
               >
-                {this.props.teamMembers.map(member => {
+                {this.props.teamMembers().map(member => {
                   return (
                     <MenuItem
                       key={member.id}
