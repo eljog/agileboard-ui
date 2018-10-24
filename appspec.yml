@@ -3,14 +3,11 @@ os: linux
 files:
   - source: build/
     destination: /var/www/html/
+  - source: scripts/httpd.conf
+    destination: /etc/httpd/conf/
 hooks:
   BeforeInstall:
     - location: scripts/install_dependencies
-      timeout: 300
-      runas: root
-
-  AfterInstall:
-    - location: scripts/configure_proxy
       timeout: 300
       runas: root
 
