@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
@@ -9,14 +9,13 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
-import CreateIcon from "@material-ui/icons/CreateRounded";
+import AddIcon from "@material-ui/icons/Add";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import axios from "axios";
 import { FormControl, Divider } from "@material-ui/core";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import API_URL from "../ApiAdapter";
 
 const styles = theme => ({
@@ -48,6 +47,9 @@ const styles = theme => ({
   },
   error: {
     color: "red"
+  },
+  button: {
+    color: "blue"
   }
 });
 
@@ -183,10 +185,8 @@ class CreateStoryDialog extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
-        <IconButton color="inherit" onClick={this.handleClickOpen}>
-          <CreateIcon />
-        </IconButton>
+      <Fragment>
+        <AddIcon onClick={this.handleClickOpen} />
         <Dialog
           fullScreen
           open={this.state.open}
@@ -318,7 +318,7 @@ class CreateStoryDialog extends Component {
             </Button>
           </form>
         </Dialog>
-      </div>
+      </Fragment>
     );
   }
 }
