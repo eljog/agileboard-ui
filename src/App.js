@@ -1,21 +1,51 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import StoryGrid from "./components/StoryGrid";
 import Login from "./components/Login";
 import axios from "axios";
 import API_URL from "./ApiAdapter";
+import Renderer from "./components/Renderer";
 
 class App extends Component {
-  state = {
-    login: {
-      status: false,
-      token: "",
-      currrentUser: null
+  storage = undefined;
+  state = {};
+
+  static emptyLogin = {
+    status: false,
+    token: "",
+    currrentUser: null
+  };
+
+  constructor(props) {
+    super(props);
+    if (JSON.parse(localStorage.getItem("login"))) {
+      this.storage = localStorage;
+    } else {
+      this.storage = sessionStorage;
+    }
+
+    const savedLogin = JSON.parse(this.storage.getItem("login"));
+    if (savedLogin) {
+      this.state = { login: savedLogin };
+    } else {
+      this.state = {
+        login: App.emptyLogin
+      };
+    }
+  }
+
+  decideStorage = remember => {
+    if (remember) {
+      sessionStorage.clear();
+      this.storage = localStorage;
+    } else {
+      localStorage.clear();
+      this.storage = sessionStorage;
     }
   };
 
   setLogin = loginState => {
+    this.decideStorage(loginState.remember);
+
     var config = {
       headers: {
         "content-type": "application/json",
@@ -30,19 +60,22 @@ class App extends Component {
         loginState.project = loginState.currrentUser.project;
         console.log("LoginState: " + JSON.stringify(loginState));
         this.setState({ login: loginState });
+
+        this.storage.setItem("login", JSON.stringify(this.state.login));
       })
       .catch(err => {
         console.log("Login Failed: " + err.message);
       });
   };
 
+  logout = () => {
+    this.setState({ login: App.emptyLogin });
+    this.storage.clear();
+  };
+
   conditionalRender = () => {
     if (this.state.login.status) {
-      if (this.state.login.currrentUser.project) {
-        return <StoryGrid loginState={this.state.login} />;
-      } else {
-        return <div>You dont have any Project</div>;
-      }
+      return <Renderer loginState={this.state.login} logout={this.logout} />;
     } else {
       return <Login setLogin={this.setLogin} loginState={this.state.login} />;
     }

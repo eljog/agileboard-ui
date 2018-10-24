@@ -63,7 +63,8 @@ class Login extends Component {
   state = {
     usernameOrEmail: "",
     password: "",
-    error: ""
+    error: "",
+    remember: false
   };
 
   static propTypes = {
@@ -80,7 +81,11 @@ class Login extends Component {
       .post(`${API_URL}/auth/signin`, bodyFormData)
       .then(res => {
         console.log("LoggedIn: " + res.data);
-        this.props.setLogin({ status: true, token: "Bearer " + res.data });
+        this.props.setLogin({
+          status: true,
+          token: "Bearer " + res.data,
+          remember: this.state.remember
+        });
       })
       .catch(err => {
         console.log("Login Failed: " + err.message);
@@ -93,8 +98,12 @@ class Login extends Component {
   };
 
   handleChange = field => event => {
+    var value = event.target.value;
+    if (field == "remember") {
+      value = event.target.checked;
+    }
     this.setState({
-      [field]: event.target.value
+      [field]: value
     });
   };
 
@@ -134,10 +143,16 @@ class Login extends Component {
                   onChange={this.handleChange("password")}
                 />
               </FormControl>
-              {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="remember"
+                    color="primary"
+                    onChange={this.handleChange("remember")}
+                  />
+                }
+                label="Remember me"
+              />
 
               <span className={classes.error}>{this.state.error}</span>
 

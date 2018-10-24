@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
@@ -96,7 +96,8 @@ class EditStoryDialog extends Component {
     const storyForm = this.state.storyForm;
     // Allow Only numbers for Story points
     if (field === "points") {
-      event.target.value.replace(/[^0-9]/g, "");
+      const value = Number.parseInt(event.target.value.replace(/[^0-9]/g, ""));
+      event.target.value = value ? value : 0;
     }
 
     storyForm[field] = event.target.value;
@@ -155,15 +156,14 @@ class EditStoryDialog extends Component {
     axios
       .post(`${API_URL}/graphql`, data, config)
       .then(res => {
-        console.log(
-          "Story Updated: " + JSON.stringify(res.data.data.updateStory)
-        );
-        const story = res.data.data.updateStory;
-        if (story === null && res !== null) {
+        if (res.data.errors !== undefined) {
           this.setState({
-            error: "❌ " + res["data"]["errors"][0]["exception"]["message"]
+            error: "❌ " + res["data"]["errors"][0]["message"]
           });
-        } else {
+        } else if (res.data.data !== undefined) {
+          console.log(
+            "Story Updated: " + JSON.stringify(res.data.data.updateStory)
+          );
           this.props.refreshUpdatedStory(res.data.data.updateStory);
           this.handleClose();
         }
@@ -179,9 +179,9 @@ class EditStoryDialog extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
-        <IconButton color="inherit">
-          <CreateIcon onClick={this.handleClickOpen} />
+      <Fragment>
+        <IconButton color="inherit" onClick={this.handleClickOpen}>
+          <CreateIcon />
         </IconButton>
         <Dialog
           fullScreen
@@ -288,7 +288,6 @@ class EditStoryDialog extends Component {
 
             <TextField
               fullWidth
-              required
               multiline
               rows={6}
               maxrows={12}
@@ -320,7 +319,7 @@ class EditStoryDialog extends Component {
             </Button>
           </form>
         </Dialog>
-      </div>
+      </Fragment>
     );
   }
 }
