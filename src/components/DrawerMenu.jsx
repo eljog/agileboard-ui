@@ -110,11 +110,6 @@ class PersistentDrawer extends Component {
     currentPage: undefined
   };
 
-  constructor(props) {
-    super(props);
-    console.log("Props: " + JSON.stringify(props));
-  }
-
   handleDrawerOpen = () => {
     this.setState({ open: true });
   };
