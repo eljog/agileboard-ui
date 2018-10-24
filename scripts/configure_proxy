@@ -1,13 +1,11 @@
 #!/bin/bash
-
-# stop apache
 isExistApp = `pgrep httpd`
 if [[ -n  $isExistApp ]]; then
     service httpd stop        
 fi
 
 # remove default httpd.conf
-rm -f /etc/httpd/conf/httpd.
+rm -f /etc/httpd/conf/httpd.conf
 
 # copy httpd.conf with proxy
-cp httpd.conf /etc/httpd/conf/httpd.conf
+cp scripts/httpd.conf /etc/httpd/conf/httpd.conf
