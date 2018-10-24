@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
@@ -179,7 +179,7 @@ class EditStoryDialog extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div>
+      <Fragment>
         <IconButton color="inherit" onClick={this.handleClickOpen}>
           <CreateIcon />
         </IconButton>
@@ -319,7 +319,7 @@ class EditStoryDialog extends Component {
             </Button>
           </form>
         </Dialog>
-      </div>
+      </Fragment>
     );
   }
 }
