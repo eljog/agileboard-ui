@@ -1,10 +1,9 @@
-const hostname = window && window.location && window.location.hostname;
-
-let url = "https://www.google.com";
-if (hostname === "localhost") {
-  url = "http://localhost:8888";
+var url = undefined;
+console.log("process.env.NODE_ENV : " + process.env.NODE_ENV);
+if (process.env.NODE_ENV == "production") {
+  url = "/agileboard";
 } else {
-  url = "http://18.222.2.26:8888";
+  url = "http://localhost:8888";
 }
 
 export default url;
