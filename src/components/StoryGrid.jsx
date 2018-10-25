@@ -9,13 +9,13 @@ import grey from "@material-ui/core/colors/grey";
 import RefreshIcon from "@material-ui/icons/RefreshOutlined";
 import CreateStoryDialog from "./CreateStoryDialog";
 import Button from "@material-ui/core/Button";
+import axios from "axios";
+import API_URL from "../ApiAdapter";
 
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    width: "90vw",
-    marginLeft: "2.5vw",
-    marginTop: "5px",
+    width: "100%",
     minHeight: "100vh"
   },
   column: {
@@ -38,6 +38,11 @@ const styles = theme => ({
 class GuttersGrid extends Component {
   static propTypes = {
     classes: PropTypes.object.isRequired
+  };
+
+  state = {
+    stories: [],
+    error: false
   };
 
   render() {
@@ -71,7 +76,7 @@ class GuttersGrid extends Component {
               className={classes.button}
             >
               <CreateStoryDialog
-                appendNewStory={this.props.appendNewStory}
+                appendNewStory={this.appendNewStory}
                 teamMembers={this.props.teamMembers}
                 statusColumns={this.props.statusColumns}
                 loginState={this.props.loginState}
@@ -89,7 +94,7 @@ class GuttersGrid extends Component {
                 >
                   {column.title}
                 </Typography>
-                {this.props.filterStoriesByStatus(column.status).map(story => (
+                {this.filterStoriesByStatus(column.status).map(story => (
                   <StoryCard
                     key={story.id}
                     id={story.id}
@@ -100,7 +105,7 @@ class GuttersGrid extends Component {
                     story={story}
                     teamMembers={this.props.teamMembers}
                     statusColumns={this.props.statusColumns}
-                    refreshUpdatedStory={this.props.refreshUpdatedStory}
+                    refreshUpdatedStory={this.refreshUpdatedStory}
                     loginState={this.props.loginState}
                   />
                 ))}
@@ -110,6 +115,77 @@ class GuttersGrid extends Component {
         </Grid>
       </Fragment>
     );
+  }
+
+  appendNewStory = story => {
+    console.log("Appending new Story!");
+    const stories = this.state.stories;
+    stories.push(story);
+    this.setState({ stories: stories });
+  };
+
+  refreshUpdatedStory = updatedStory => {
+    console.log("Refreshing updated Story!");
+    const stories = this.state.stories.filter(story => {
+      return story.id !== updatedStory.id;
+    });
+    stories.push(updatedStory);
+    this.setState({ stories: stories });
+  };
+
+  fetchStoriesForProject = () => {
+    console.log("Fetching");
+    var config = {
+      headers: {
+        "content-type": "application/json",
+        authorization: `${this.props.loginState.token}`
+      }
+    };
+
+    const query = `query { 
+      getStoriesByProject(projectId: ${this.props.loginState.project.id}) {
+          id
+          name
+          details
+          status
+          points
+          owner {
+              name
+              id
+            }
+          project {
+            id
+            name
+          }
+        }
+    }`;
+    const variables = null;
+
+    let data = {
+      query: query,
+      variables: variables
+    };
+
+    axios
+      .post(`${API_URL}/graphql`, data, config)
+      .then(res => {
+        console.log(res.data.data.getStoriesByProject);
+        this.setState({ stories: res.data.data.getStoriesByProject });
+      })
+      .catch(err => {
+        console.log("GraphQL Error: " + err.message);
+      });
+  };
+
+  filterStoriesByStatus = status => {
+    const newStories = this.state.stories.filter(story => {
+      return story.status === status;
+    });
+    return newStories;
+  };
+
+  componentDidMount() {
+    this.fetchStoriesForProject();
   }
 }
 

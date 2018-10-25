@@ -19,8 +19,9 @@ import ProfileIcon from "@material-ui/icons/Person";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
 import ProjectIcon from "@material-ui/icons/NextWeek";
 import AboutUsIcon from "@material-ui/icons/Info";
-
 import StoryGrid from "./StoryGrid";
+import AlertDialog from "./AlertDialog";
+import Project from "./Project";
 
 const drawerWidth = 240;
 
@@ -36,9 +37,16 @@ const styles = theme => ({
     display: "flex",
     width: "100%"
   },
+  // appBar: {
+  //   position: "absolute",
+  //   transition: theme.transitions.create(["margin", "width"], {
+  //     easing: theme.transitions.easing.sharp,
+  //     duration: theme.transitions.duration.leavingScreen
+  //   })
+  // },
   appBar: {
-    position: "absolute",
-    transition: theme.transitions.create(["margin", "width"], {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
     })
@@ -63,9 +71,29 @@ const styles = theme => ({
   hide: {
     display: "none"
   },
+  // drawerPaper: {
+  //   position: "relative",
+  //   width: drawerWidth
+  // },
   drawerPaper: {
     position: "relative",
-    width: drawerWidth
+    whiteSpace: "nowrap",
+    width: drawerWidth,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen
+    })
+  },
+  drawerPaperClose: {
+    overflowX: "hidden",
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    }),
+    width: theme.spacing.unit * 7,
+    [theme.breakpoints.up("sm")]: {
+      width: theme.spacing.unit * 9
+    }
   },
   drawerHeader: {
     display: "flex",
@@ -77,7 +105,7 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 1,
+    padding: theme.spacing.unit * 3,
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen
@@ -149,7 +177,10 @@ class PersistentDrawer extends Component {
       content: <h5>We are a Simple free Agile Board!</h5>
     },
     profile: { title: "My Profile", content: <h5>My Profile!</h5> },
-    project: { title: "My Project", content: <h5>My Project</h5> }
+    project: {
+      title: "My Project",
+      content: <Project loginState={this.props.loginState} />
+    }
   };
 
   render() {
@@ -158,11 +189,16 @@ class PersistentDrawer extends Component {
 
     const drawer = (
       <Drawer
-        variant="persistent"
+        // variant="persistent"
+        variant="permanent"
         anchor={anchor}
         open={open}
         classes={{
-          paper: classes.drawerPaper
+          // paper: classes.drawerPaper
+          paper: classNames(
+            classes.drawerPaper,
+            !this.state.open && classes.drawerPaperClose
+          )
         }}
       >
         <div className={classes.drawerHeader}>
@@ -178,7 +214,8 @@ class PersistentDrawer extends Component {
             onClick={() =>
               this.props.loginState.currrentUser.project
                 ? this.loadPage(this.pages.storyGrid)
-                : this.loadPage(this.pages.project)
+                : alert("Please create a Project First!") ||
+                  this.loadPage(this.pages.project)
             }
           >
             <ListItemIcon>
@@ -265,12 +302,12 @@ class PersistentDrawer extends Component {
           {before}
           <main
             className={classNames(
-              classes.content,
-              classes[`content-${anchor}`],
-              {
-                [classes.contentShift]: open,
-                [classes[`contentShift-${anchor}`]]: open
-              }
+              classes.content
+              // classes[`content-${anchor}`],
+              // {
+              //   [classes.contentShift]: open,
+              //   [classes[`contentShift-${anchor}`]]: open
+              // }
             )}
           >
             <div className={classes.drawerHeader} />
@@ -284,6 +321,12 @@ class PersistentDrawer extends Component {
         </div>
       </div>
     );
+  }
+
+  componentDidMount() {
+    this.props.loginState.currrentUser.project
+      ? this.setState({ currentPage: this.pages.storyGrid })
+      : this.setState({ currentPage: this.pages.project });
   }
 }
 

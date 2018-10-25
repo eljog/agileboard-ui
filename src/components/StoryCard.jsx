@@ -19,8 +19,8 @@ const theme = createMuiTheme({
 
 const styles = theme => ({
   card: {
-    maxWidth: "15vw",
-    minWidth: "15vw",
+    maxWidth: "16vw",
+    minWidth: "16vw",
     marginBottom: "1vh"
   },
 
