@@ -22,6 +22,7 @@ import AboutUsIcon from "@material-ui/icons/Info";
 import StoryGrid from "./StoryGrid";
 import AlertDialog from "./AlertDialog";
 import Project from "./Project";
+import Profile from "./Profile";
 
 const drawerWidth = 240;
 
@@ -71,10 +72,7 @@ const styles = theme => ({
   hide: {
     display: "none"
   },
-  // drawerPaper: {
-  //   position: "relative",
-  //   width: drawerWidth
-  // },
+
   drawerPaper: {
     position: "relative",
     whiteSpace: "nowrap",
@@ -169,6 +167,9 @@ class PersistentDrawer extends Component {
           statusColumns={this.props.statusColumns}
           fetchStoriesForProject={this.props.fetchStoriesForProject}
           filterStoriesByStatus={this.props.filterStoriesByStatus}
+          setUserAndProject={this.props.setUserAndProject}
+          getProject={this.props.getProject}
+          fetchProjectMembers={this.props.fetchProjectMembers}
         />
       )
     },
@@ -176,10 +177,21 @@ class PersistentDrawer extends Component {
       title: "About Us",
       content: <h5>We are a Simple free Agile Board!</h5>
     },
-    profile: { title: "My Profile", content: <h5>My Profile!</h5> },
+    profile: {
+      title: "My Profile",
+      content: <Profile loginState={this.props.loginState} />
+    },
     project: {
       title: "My Project",
-      content: <Project loginState={this.props.loginState} />
+      content: (
+        <Project
+          loginState={this.props.loginState}
+          teamMembers={this.props.teamMembers}
+          setUserAndProject={this.props.setUserAndProject}
+          getProject={this.props.getProject}
+          fetchProjectMembers={this.props.fetchProjectMembers}
+        />
+      )
     }
   };
 
@@ -212,7 +224,7 @@ class PersistentDrawer extends Component {
             button
             key={"Story Board"}
             onClick={() =>
-              this.props.loginState.currrentUser.project
+              this.props.loginState.currentUser.project
                 ? this.loadPage(this.pages.storyGrid)
                 : alert("Please create a Project First!") ||
                   this.loadPage(this.pages.project)
@@ -246,7 +258,7 @@ class PersistentDrawer extends Component {
         </List>
         <Divider />
         <List>
-          <ListItem button key={"Sign Out"} onClick={() => this.props.logout()}>
+          <ListItem button key={"Sign Out"} onClick={this.props.logout}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -324,7 +336,7 @@ class PersistentDrawer extends Component {
   }
 
   componentDidMount() {
-    this.props.loginState.currrentUser.project
+    this.props.getProject()
       ? this.setState({ currentPage: this.pages.storyGrid })
       : this.setState({ currentPage: this.pages.project });
   }
