@@ -18,6 +18,10 @@ class Renderer extends Component {
     error: false
   };
 
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
       <PersistentDrawer
@@ -25,12 +29,15 @@ class Renderer extends Component {
         teamMembers={this.getTeamMembers}
         statusColumns={columns}
         refreshUpdatedStory={this.refreshUpdatedStory}
-        loginState={this.props.loginState}
+        clearGraphQLStore={this.clearStore}
         filterStoriesByStatus={this.filterStoriesByStatus}
         fetchStoriesForProject={this.fetchStoriesForProject}
         appendNewStory={this.appendNewStory}
         updatedStory={this.refreshUpdatedStory}
         logout={this.props.logout}
+        setUserAndProject={this.props.setUserAndProject}
+        getProject={this.props.getProject}
+        fetchProjectMembers={this.fetchProjectMembers}
       />
     );
   }
@@ -39,7 +46,7 @@ class Renderer extends Component {
     return this.state.teamMembers;
   };
 
-  fetchProjectMembers = () => {
+  fetchProjectMembers = async project => {
     var config = {
       headers: {
         "content-type": "application/json",
@@ -48,7 +55,7 @@ class Renderer extends Component {
     };
 
     const query = `query { 
-      getUsersByProject(projectId: ${this.props.loginState.project.id}) {
+      getUsersByProject(projectId: ${project.id}) {
         id
         name
       }
@@ -60,7 +67,7 @@ class Renderer extends Component {
       variables: variables
     };
 
-    axios
+    await axios
       .post(`${API_URL}/graphql`, data, config)
       .then(res => {
         console.log(res.data.data.getUsersByProject);
@@ -73,7 +80,7 @@ class Renderer extends Component {
 
   componentDidMount() {
     if (this.props.loginState.project) {
-      this.fetchProjectMembers();
+      this.fetchProjectMembers(this.props.loginState.project);
     }
   }
 }
