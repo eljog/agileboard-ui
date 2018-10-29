@@ -368,13 +368,13 @@ class Project extends Component {
             console.log(
               "Member added: " + JSON.stringify(res.data.data.addProjectToUser)
             );
-
+            this.refreshProjectInState(this.props.getProject());
             setTimeout(() => {
               this.setState({
                 members: this.props.teamMembers(),
                 newMembers: []
               });
-            }, 2000);
+            }, 1000);
           }
         })
         .catch(err => {
@@ -383,7 +383,6 @@ class Project extends Component {
           );
         });
     });
-    this.refreshProjectInState(this.props.getProject());
   };
 
   refreshProjectInState = project => {
@@ -394,6 +393,20 @@ class Project extends Component {
   addMember = e => {
     e.preventDefault();
     this.addProjectMember();
+  };
+
+  getPossibleMembers = () => {
+    const filtered = this.state.allUsers.filter(user => {
+      let can = true;
+      this.state.members.map(member => {
+        if (member.id == user.id) {
+          can = false;
+        }
+      });
+      return can;
+    });
+
+    return filtered;
   };
 
   render() {
@@ -488,9 +501,9 @@ class Project extends Component {
                         shrink: true
                       }
                     }}
-                    options={this.state.allUsers.map(user => ({
+                    options={this.getPossibleMembers().map(user => ({
                       value: user.id,
-                      label: user.name + "Hello"
+                      label: user.name
                     }))}
                     value={this.state.newMembers}
                     onChange={this.handleReactSelectChange("newMembers")}

@@ -12,7 +12,7 @@ class App extends Component {
   static emptyLogin = {
     status: false,
     token: "",
-    currrentUser: null
+    currentUser: null
   };
 
   constructor(props) {
@@ -68,8 +68,8 @@ class App extends Component {
     axios
       .get(`${API_URL}/user/me`, config)
       .then(res => {
-        loginState.currrentUser = res.data;
-        loginState.project = loginState.currrentUser.project;
+        loginState.currentUser = res.data;
+        loginState.project = loginState.currentUser.project;
         console.log("Updated LoginState: " + JSON.stringify(loginState));
         this.setState({ login: loginState });
 
