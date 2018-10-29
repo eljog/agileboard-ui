@@ -43,10 +43,22 @@ class App extends Component {
     }
   };
 
-  setLogin = loginState => {
-    this.decideStorage(loginState.remember);
+  getProject = () => {
+    console.log("App::getProject");
+    return this.state.login.project;
+  };
 
-    var config = {
+  setLogin = loginState => {
+    console.log("App::setLogin");
+    this.decideStorage(loginState.remember);
+    this.setUserAndProject(loginState);
+  };
+
+  setUserAndProject = loginState => {
+    console.log("App::setUserAndProject");
+    // let loginState = this.state.login;
+
+    const config = {
       headers: {
         "content-type": "application/json",
         authorization: `${loginState.token}`
@@ -58,13 +70,13 @@ class App extends Component {
       .then(res => {
         loginState.currrentUser = res.data;
         loginState.project = loginState.currrentUser.project;
-        console.log("LoginState: " + JSON.stringify(loginState));
+        console.log("Updated LoginState: " + JSON.stringify(loginState));
         this.setState({ login: loginState });
 
         this.storage.setItem("login", JSON.stringify(this.state.login));
       })
       .catch(err => {
-        console.log("Login Failed: " + err.message);
+        console.log("Fetching /user/me Failed: " + err.message);
       });
   };
 
@@ -75,7 +87,14 @@ class App extends Component {
 
   conditionalRender = () => {
     if (this.state.login.status) {
-      return <Renderer loginState={this.state.login} logout={this.logout} />;
+      return (
+        <Renderer
+          loginState={this.state.login}
+          logout={this.logout}
+          setUserAndProject={this.setUserAndProject}
+          getProject={this.getProject}
+        />
+      );
     } else {
       return <Login setLogin={this.setLogin} loginState={this.state.login} />;
     }

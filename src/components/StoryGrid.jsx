@@ -1,15 +1,20 @@
 import React, { Component, Fragment } from "react";
+
 import PropTypes from "prop-types";
+
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import StoryCard from "./StoryCard";
 import Typography from "@material-ui/core/Typography";
 import grey from "@material-ui/core/colors/grey";
 import RefreshIcon from "@material-ui/icons/RefreshOutlined";
-import CreateStoryDialog from "./CreateStoryDialog";
 import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
 import axios from "axios";
+
+import StoryCard from "./StoryCard";
+import CreateStoryDialog from "./CreateStoryDialog";
 import API_URL from "../ApiAdapter";
 
 const styles = theme => ({
@@ -32,6 +37,14 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit
+  },
+  error: {
+    color: "red"
+  },
+  progress: {
+    marginTop: "30vh",
+    position: "absolute",
+    zIndex: 1
   }
 });
 
@@ -42,7 +55,8 @@ class GuttersGrid extends Component {
 
   state = {
     stories: [],
-    error: false
+    error: "",
+    loading: false
   };
 
   render() {
@@ -50,6 +64,12 @@ class GuttersGrid extends Component {
 
     return (
       <Fragment>
+        {this.state.error && (
+          <span className={classes.error}>{this.state.error}</span>
+        )}
+        {this.state.loading && (
+          <CircularProgress className={classes.progress} />
+        )}
         <Grid
           container
           className={classes.root}
@@ -64,7 +84,7 @@ class GuttersGrid extends Component {
               color="secondary"
               aria-label="Add"
               className={classes.button}
-              onClick={this.props.fetchStoriesForProject}
+              onClick={this.fetchStoriesForProject}
             >
               <RefreshIcon />
             </Button>
@@ -135,6 +155,8 @@ class GuttersGrid extends Component {
 
   fetchStoriesForProject = () => {
     console.log("Fetching");
+    this.setState({ error: "", loading: true });
+
     var config = {
       headers: {
         "content-type": "application/json",
@@ -170,10 +192,14 @@ class GuttersGrid extends Component {
       .post(`${API_URL}/graphql`, data, config)
       .then(res => {
         console.log(res.data.data.getStoriesByProject);
-        this.setState({ stories: res.data.data.getStoriesByProject });
+        this.setState({
+          stories: res.data.data.getStoriesByProject,
+          loading: false
+        });
       })
       .catch(err => {
         console.log("GraphQL Error: " + err.message);
+        this.setState({ error: "❌" + err.message });
       });
   };
 

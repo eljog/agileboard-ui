@@ -154,7 +154,10 @@ class Login extends Component {
                 label="Remember me"
               />
 
-              <span className={classes.error}>{this.state.error}</span>
+              <span className={classes.error}>
+                <br />
+                {this.state.error}
+              </span>
 
               <Button
                 type="submit"
