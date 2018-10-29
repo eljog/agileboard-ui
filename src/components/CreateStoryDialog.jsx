@@ -73,10 +73,10 @@ class CreateStoryDialog extends Component {
     console.log(JSON.stringify(props));
     const storyForm = {
       name: "",
-      owner: `${this.props.loginState.currrentUser.id}`,
+      owner: `${this.props.loginState.currentUser.id}`,
       details: "",
       status: "New",
-      project: `${this.props.loginState.currrentUser.project.id}`,
+      project: `${this.props.loginState.currentUser.project.id}`,
       points: 0
     };
     this.state = { open: false, storyForm: storyForm };
@@ -91,10 +91,10 @@ class CreateStoryDialog extends Component {
       open: false,
       storyForm: {
         name: "",
-        owner: `${this.props.loginState.currrentUser.id}`,
+        owner: `${this.props.loginState.currentUser.id}`,
         details: "",
         status: "New",
-        project: `${this.props.loginState.currrentUser.project.id}`,
+        project: `${this.props.loginState.currentUser.project.id}`,
         points: 0
       }
     });
