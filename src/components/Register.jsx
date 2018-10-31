@@ -91,28 +91,13 @@ class Register extends Component {
       })
       .catch(err => {
         console.log("Signup Failed: " + err.message);
-        const n = "\n";
         let errorMessage = err.message;
         if (err.response !== undefined) {
-          // const errors = err.response["data"]["errors"];
-          // if (errors !== undefined) {
-          //   errorMessage = "Signup Failed\n";
-          //   errors.map(error => {
-          //     errorMessage =
-          //       errorMessage +
-          //       error.field +
-          //       "- " +
-          //       error.defaultMessage +
-          //       ~{ n };
-          //   });
-          // } else {
           if (err.response["data"]["message"] != undefined) {
             errorMessage = err.response["data"]["message"];
           } else {
             errorMessage = err.response["data"];
           }
-
-          // }
         }
         this.setState({ error: "❌" + errorMessage });
       });
