@@ -168,11 +168,6 @@ class Login extends Component {
               >
                 Sign in
               </Button>
-
-              <br />
-              <Button onClick={this.props.showRegister}>
-                New? Register here!
-              </Button>
             </form>
           </Paper>
         </main>
