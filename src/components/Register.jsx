@@ -8,7 +8,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
-import LockIcon from "@material-ui/icons/LockOutlined";
+import PenIcon from "@material-ui/icons/CreateOutlined";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -59,12 +59,14 @@ const styles = theme => ({
   }
 });
 
-class Login extends Component {
+class Register extends Component {
   state = {
-    usernameOrEmail: "",
+    name: "",
+    username: "",
+    email: "",
     password: "",
-    error: "",
-    remember: false
+    confirmPassword: "",
+    error: ""
   };
 
   static propTypes = {
@@ -73,25 +75,44 @@ class Login extends Component {
 
   login = event => {
     event.preventDefault();
-    const bodyFormData = new FormData();
-    bodyFormData.set("usernameOrEmail", this.state.usernameOrEmail);
-    bodyFormData.set("password", this.state.password);
+    if (!this.validatePassword()) return;
+    const data = {};
+    data.name = this.state.name;
+    data.email = this.state.email;
+    data.username = this.state.username;
+    data.password = this.state.password;
 
     axios
-      .post(`${API_URL}/auth/signin`, bodyFormData)
+      .post(`${API_URL}/auth/signup`, data)
       .then(res => {
-        console.log("LoggedIn: " + res.data);
-        this.props.setLogin({
-          status: true,
-          token: "Bearer " + res.data,
-          remember: this.state.remember
-        });
+        console.log(res.data);
+        alert(res.data);
+        this.props.showLogin();
       })
       .catch(err => {
-        console.log("Login Failed: " + err.message);
+        console.log("Signup Failed: " + err.message);
+        const n = "\n";
         let errorMessage = err.message;
         if (err.response !== undefined) {
-          errorMessage = err.response["data"]["message"];
+          // const errors = err.response["data"]["errors"];
+          // if (errors !== undefined) {
+          //   errorMessage = "Signup Failed\n";
+          //   errors.map(error => {
+          //     errorMessage =
+          //       errorMessage +
+          //       error.field +
+          //       "- " +
+          //       error.defaultMessage +
+          //       ~{ n };
+          //   });
+          // } else {
+          if (err.response["data"]["message"] != undefined) {
+            errorMessage = err.response["data"]["message"];
+          } else {
+            errorMessage = err.response["data"];
+          }
+
+          // }
         }
         this.setState({ error: "❌" + errorMessage });
       });
@@ -99,12 +120,20 @@ class Login extends Component {
 
   handleChange = field => event => {
     var value = event.target.value;
-    if (field == "remember") {
-      value = event.target.checked;
-    }
     this.setState({
       [field]: value
     });
+  };
+
+  validatePassword = () => {
+    if (
+      this.state.password !== undefined &&
+      this.state.password === this.state.confirmPassword
+    ) {
+      return true;
+    }
+    this.setState({ error: "Passwords do not match!" });
+    return false;
   };
 
   render() {
@@ -115,22 +144,40 @@ class Login extends Component {
         <main className={classes.layout}>
           <Paper className={classes.paper}>
             <Typography component="h5" variant="h5">
-              Simply Agile!
+              Register
             </Typography>
             <Avatar className={classes.avatar}>
-              <LockIcon />
+              <PenIcon />
             </Avatar>
             <form className={classes.form} onSubmit={this.login}>
               <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="email">
-                  Email Address or Username
-                </InputLabel>
+                <InputLabel htmlFor="email">Name</InputLabel>
+                <Input
+                  id="name"
+                  name="name"
+                  autoComplete="name"
+                  autoFocus
+                  inputProps={{ maxLength: 40, minLength: 4 }}
+                  onChange={this.handleChange("name")}
+                />
+              </FormControl>
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="email">Email Address</InputLabel>
                 <Input
                   id="email"
                   name="email"
                   autoComplete="email"
-                  autoFocus
-                  onChange={this.handleChange("usernameOrEmail")}
+                  inputProps={{ maxLength: 40, type: "email" }}
+                  onChange={this.handleChange("email")}
+                />
+              </FormControl>
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="email">Username</InputLabel>
+                <Input
+                  id="username"
+                  name="username"
+                  inputProps={{ maxLength: 15, minLength: 3 }}
+                  onChange={this.handleChange("username")}
                 />
               </FormControl>
               <FormControl margin="normal" required fullWidth>
@@ -140,25 +187,28 @@ class Login extends Component {
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  inputProps={{ maxLength: 20, minLength: 3 }}
                   onChange={this.handleChange("password")}
                 />
               </FormControl>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    name="remember"
-                    color="primary"
-                    onChange={this.handleChange("remember")}
-                  />
-                }
-                label="Remember me"
-              />
-
-              <span className={classes.error}>
-                <br />
-                {this.state.error}
-              </span>
-
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="password">Confirm Password</InputLabel>
+                <Input
+                  name="password-confirm"
+                  type="password"
+                  id="password-confirm"
+                  inputProps={{ maxLength: 20, minLength: 3 }}
+                  onChange={this.handleChange("confirmPassword")}
+                />
+              </FormControl>
+              {this.state.error ? (
+                <span className={classes.error}>
+                  <br />
+                  {this.state.error}
+                </span>
+              ) : (
+                React.Fragment
+              )}
               <Button
                 type="submit"
                 fullWidth
@@ -166,14 +216,13 @@ class Login extends Component {
                 color="primary"
                 className={classes.submit}
               >
-                Sign in
-              </Button>
-
-              <br />
-              <Button onClick={this.props.showRegister}>
-                New? Register here!
+                Register
               </Button>
             </form>
+            <br />
+            <Button onClick={this.props.showLogin}>
+              Already Registered? Login here!
+            </Button>
           </Paper>
         </main>
       </MuiThemeProvider>
@@ -181,4 +230,4 @@ class Login extends Component {
   }
 }
 
-export default withStyles(styles)(Login);
+export default withStyles(styles)(Register);
