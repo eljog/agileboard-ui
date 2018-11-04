@@ -38,7 +38,9 @@ const styles = theme => ({
   },
   avatar: {
     margin: theme.spacing.unit,
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.secondary.main,
+    width: theme.spacing.unit * 10,
+    height: theme.spacing.unit * 10
   }
 });
 class Profile extends Component {
@@ -57,9 +59,11 @@ class Profile extends Component {
             </Typography>
             <Avatar className={classes.avatar}>
               <img
-                src={`https://placeimg.com/6${
+                // src={`https://placeimg.com/12${this.props.loginState.currentUser
+                //   .id % 10}/120/people`}
+                src={`https://api.adorable.io/avatars/80/${
                   this.props.loginState.currentUser.id
-                }/120/people`}
+                }.png`}
                 alt=""
               />
             </Avatar>

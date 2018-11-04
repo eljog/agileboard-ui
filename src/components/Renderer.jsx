@@ -46,7 +46,7 @@ class Renderer extends Component {
     return this.state.teamMembers;
   };
 
-  fetchProjectMembers = async project => {
+  fetchProjectMembers = project => {
     var config = {
       headers: {
         "content-type": "application/json",
@@ -67,7 +67,7 @@ class Renderer extends Component {
       variables: variables
     };
 
-    await axios
+    axios
       .post(`${API_URL}/graphql`, data, config)
       .then(res => {
         console.log(res.data.data.getUsersByProject);

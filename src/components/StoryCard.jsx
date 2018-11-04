@@ -80,15 +80,22 @@ class StoryCard extends Component {
               avatar={
                 <Avatar aria-label="Recipe" className={classes.avatar}>
                   <img
-                    src={`https://placeimg.com/6${
+                    // /src={`https://placeimg.com/12${this.props.story.owner.id %
+                    //   10}/120/animals`}
+                    src={`https://api.adorable.io/avatars/32/${
                       this.props.story.owner.id
-                    }/120/people`}
+                    }.png`}
                     alt=""
                   />
                 </Avatar>
               }
               title={"Story " + this.props.id}
-              subheader={this.props.ownerName}
+              subheader={
+                // this.props.ownerName.substring(0, 8) &
+                this.props.ownerName.length > 14
+                  ? this.props.ownerName.substring(0, 12) + "..."
+                  : this.props.ownerName
+              }
               action={
                 <EditStoryDialog
                   story={this.props.story}

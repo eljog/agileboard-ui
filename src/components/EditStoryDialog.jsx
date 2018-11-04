@@ -37,7 +37,8 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     display: "flex",
-    minWidth: 200
+    minWidth: theme.spacing.unit * 23,
+    maxWidth: theme.spacing.unit * 23
   },
   dense: {
     marginTop: 19
@@ -89,7 +90,7 @@ class EditStoryDialog extends Component {
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ open: false, error: null });
   };
 
   handleChange = field => event => {
@@ -184,13 +185,15 @@ class EditStoryDialog extends Component {
           <CreateIcon />
         </IconButton>
         <Dialog
-          fullScreen
           open={this.state.open}
           onClose={this.handleClose}
           TransitionComponent={Transition}
         >
           <AppBar className={classes.appBar}>
             <Toolbar>
+              <Typography variant="h6" color="inherit" className={classes.flex}>
+                View/Update: Story {this.state.storyForm.id}
+              </Typography>
               <IconButton
                 color="inherit"
                 onClick={this.handleClose}
@@ -198,12 +201,6 @@ class EditStoryDialog extends Component {
               >
                 <CloseIcon />
               </IconButton>
-              <Typography variant="h6" color="inherit" className={classes.flex}>
-                View/Update: Story {this.state.storyForm.id}
-              </Typography>
-              {/* <Button color="inherit" onClick={this.handleClose}>
-                save
-              </Button> */}
             </Toolbar>
           </AppBar>
           <form
@@ -281,7 +278,7 @@ class EditStoryDialog extends Component {
               id="story-points"
               label="Points"
               inputProps={{ maxLength: 3 }}
-              className={classes.textField}
+              className={classes.selectField}
               value={this.state.storyForm.points}
               onChange={this.handleChange("points")}
             />
@@ -310,6 +307,7 @@ class EditStoryDialog extends Component {
             </FormControl>
 
             <Button
+              fullWidth
               variant="contained"
               color="primary"
               type="submit"
@@ -318,6 +316,7 @@ class EditStoryDialog extends Component {
               Update
             </Button>
           </form>
+          <br />
         </Dialog>
       </Fragment>
     );
