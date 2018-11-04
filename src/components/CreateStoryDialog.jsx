@@ -37,7 +37,8 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     display: "flex",
-    minWidth: 200
+    minWidth: theme.spacing.unit * 23,
+    maxWidth: theme.spacing.unit * 23
   },
   dense: {
     marginTop: 19
@@ -47,9 +48,6 @@ const styles = theme => ({
   },
   error: {
     color: "red"
-  },
-  button: {
-    color: "blue"
   }
 });
 
@@ -96,7 +94,8 @@ class CreateStoryDialog extends Component {
         status: "New",
         project: `${this.props.loginState.currentUser.project.id}`,
         points: 0
-      }
+      },
+      error: null
     });
   };
 
@@ -188,13 +187,18 @@ class CreateStoryDialog extends Component {
       <Fragment>
         <AddIcon onClick={this.handleClickOpen} />
         <Dialog
-          fullScreen
           open={this.state.open}
           onClose={this.handleClose}
           TransitionComponent={Transition}
         >
           <AppBar className={classes.appBar}>
             <Toolbar>
+              <Typography variant="h6" color="inherit" className={classes.flex}>
+                New Story
+              </Typography>
+              {/* <Button color="inherit" onClick={this.handleClose}>
+                save
+              </Button> */}
               <IconButton
                 color="inherit"
                 onClick={this.handleClose}
@@ -202,12 +206,6 @@ class CreateStoryDialog extends Component {
               >
                 <CloseIcon />
               </IconButton>
-              <Typography variant="h6" color="inherit" className={classes.flex}>
-                New Story
-              </Typography>
-              {/* <Button color="inherit" onClick={this.handleClose}>
-                save
-              </Button> */}
             </Toolbar>
           </AppBar>
           <form
@@ -283,7 +281,7 @@ class CreateStoryDialog extends Component {
               id="story-points"
               label="Points"
               inputProps={{ maxLength: 3 }}
-              className={classes.textField}
+              className={classes.selectField}
               value={this.state.storyForm.points}
               onChange={this.handleChange("points")}
             />
@@ -309,6 +307,7 @@ class CreateStoryDialog extends Component {
               {/* <FormHelperText>{this.state.error}</FormHelperText> */}
             </FormControl>
             <Button
+              fullWidth
               variant="contained"
               color="primary"
               type="submit"
@@ -317,6 +316,7 @@ class CreateStoryDialog extends Component {
               Create
             </Button>
           </form>
+          <br />
         </Dialog>
       </Fragment>
     );
