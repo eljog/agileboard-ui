@@ -101,7 +101,7 @@ class Project extends Component {
     this.state = {
       members: props.teamMembers(),
       newMembers: [],
-      allUsers: [],
+      possibleMembers: [],
       hasProject: props.getProject() ? true : false,
       projectName: props.getProject() ? props.getProject().name : "",
       projectDescription: props.getProject()
@@ -137,7 +137,7 @@ class Project extends Component {
   };
 
   componentDidMount() {
-    this.fetchUsers();
+    this.fetchUsersWithoutProject();
   }
 
   closeSnackBar = () => {
@@ -146,7 +146,9 @@ class Project extends Component {
     this.setState({ message: message });
   };
 
-  fetchUsers = () => {
+  fetchUsersWithoutProject = () => {
+    this.setState({ possibleMembers: [] });
+
     var config = {
       headers: {
         "content-type": "application/json",
@@ -155,7 +157,7 @@ class Project extends Component {
     };
 
     const query = `query { 
-      getUsers {
+      getUsersWithoutProject {
         id
         name
       }
@@ -170,8 +172,10 @@ class Project extends Component {
     axios
       .post(`${API_URL}/graphql`, data, config)
       .then(res => {
-        console.log(res.data.data.getUsers);
-        this.setState({ allUsers: res.data.data.getUsers });
+        console.log(res.data.data.getUsersWithoutProject);
+        this.setState({
+          possibleMembers: res.data.data.getUsersWithoutProject
+        });
       })
       .catch(err => {
         console.log("GraphQL Error: " + err.message);
@@ -240,12 +244,6 @@ class Project extends Component {
           );
           this.setState({
             hasProject: true,
-            members: [
-              {
-                id: this.props.loginState.currentUser.id,
-                name: this.props.loginState.currentUser.name
-              }
-            ],
             message: {
               text:
                 "Project Successfully created with ID: " +
@@ -405,25 +403,12 @@ class Project extends Component {
   refreshProjectInState = project => {
     this.props.setUserAndProject(this.props.loginState);
     this.props.fetchProjectMembers(project);
+    this.fetchUsersWithoutProject();
   };
 
   addMember = e => {
     e.preventDefault();
     this.addProjectMember();
-  };
-
-  getPossibleMembers = () => {
-    const filtered = this.state.allUsers.filter(user => {
-      let can = true;
-      this.state.members.map(member => {
-        if (member.id == user.id) {
-          can = false;
-        }
-      });
-      return can;
-    });
-
-    return filtered;
   };
 
   render() {
@@ -517,7 +502,7 @@ class Project extends Component {
                         shrink: true
                       }
                     }}
-                    options={this.getPossibleMembers().map(user => ({
+                    options={this.state.possibleMembers.map(user => ({
                       value: user.id,
                       label: user.name
                     }))}
@@ -548,7 +533,8 @@ class Project extends Component {
               horizontal: "center"
             }}
             open={this.state.message.show}
-            autoHideDuration={6000}
+            autoHideDuration={5000}
+            onClose={this.closeSnackBar}
           >
             <SnackbarContent
               className={classes[`snackbar${this.state.message.type}`]}

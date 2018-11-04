@@ -4,6 +4,7 @@ import Login from "./components/Login";
 import axios from "axios";
 import API_URL from "./ApiAdapter";
 import Renderer from "./components/Renderer";
+import Register from "./components/Register";
 
 class App extends Component {
   storage = undefined;
@@ -85,6 +86,29 @@ class App extends Component {
     this.storage.clear();
   };
 
+  showLogin = () => {
+    console.log("App::showLogin");
+    this.setState({ showRegister: false });
+  };
+
+  showRegister = () => {
+    console.log("App::showRegister");
+    this.setState({ showRegister: true });
+  };
+
+  loginOrRegister = () => {
+    const form = this.state.showRegister ? (
+      <Register showLogin={this.showLogin} />
+    ) : (
+      <Login
+        setLogin={this.setLogin}
+        showRegister={this.showRegister}
+        loginState={this.state.login}
+      />
+    );
+    return form;
+  };
+
   conditionalRender = () => {
     if (this.state.login.status) {
       return (
@@ -96,7 +120,7 @@ class App extends Component {
         />
       );
     } else {
-      return <Login setLogin={this.setLogin} loginState={this.state.login} />;
+      return this.loginOrRegister();
     }
   };
 
