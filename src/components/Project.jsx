@@ -19,6 +19,7 @@ import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import green from "@material-ui/core/colors/green";
+import grey from "@material-ui/core/colors/grey";
 
 import axios from "axios";
 import Select from "react-select";
@@ -81,6 +82,16 @@ const styles = theme => ({
     marginRight: theme.spacing.unit
   }
 });
+
+const CustomTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: grey[800],
+    color: theme.palette.common.white
+  },
+  body: {
+    fontSize: 14
+  }
+}))(TableCell);
 
 class Project extends Component {
   state = {};
@@ -229,6 +240,12 @@ class Project extends Component {
           );
           this.setState({
             hasProject: true,
+            members: [
+              {
+                id: this.props.loginState.currentUser.id,
+                name: this.props.loginState.currentUser.name
+              }
+            ],
             message: {
               text:
                 "Project Successfully created with ID: " +
@@ -462,15 +479,14 @@ class Project extends Component {
 
           {this.state.hasProject && (
             <Paper className={classes.paper}>
-              <Typography component="h5" variant="h5">
-                Manage Members
-              </Typography>
               <form onSubmit={this.addMember}>
                 <Paper>
                   <Table className={classes.table}>
                     <TableHead>
                       <TableRow>
-                        <TableCell component="th">Current Members</TableCell>
+                        <CustomTableCell component="th">
+                          Manage Members
+                        </CustomTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>

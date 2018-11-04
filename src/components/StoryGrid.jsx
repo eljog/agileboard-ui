@@ -154,7 +154,7 @@ class GuttersGrid extends Component {
   };
 
   fetchStoriesForProject = () => {
-    console.log("Fetching");
+    console.log("StoryGrid::fetchStoriesForProject");
     this.setState({ error: "", loading: true });
 
     var config = {

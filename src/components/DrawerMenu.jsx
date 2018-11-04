@@ -14,6 +14,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { ListItem } from "@material-ui/core";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import HomeIcon from "@material-ui/icons/Home";
 import StoryBoardIcon from "@material-ui/icons/Dashboard";
 import ProfileIcon from "@material-ui/icons/Person";
 import LogoutIcon from "@material-ui/icons/ExitToApp";
@@ -23,6 +24,7 @@ import StoryGrid from "./StoryGrid";
 import AlertDialog from "./AlertDialog";
 import Project from "./Project";
 import Profile from "./Profile";
+import Dashboard from "./Dashboard";
 
 const drawerWidth = 240;
 
@@ -175,7 +177,12 @@ class PersistentDrawer extends Component {
     },
     about: {
       title: "About Us",
-      content: <h5>We are a Simple free Agile Board!</h5>
+      content: (
+        <h5>
+          Simply Agile! by Eljo (which is not important) - Backed by super
+          powerful Amazon Aurora
+        </h5>
+      )
     },
     profile: {
       title: "My Profile",
@@ -192,6 +199,10 @@ class PersistentDrawer extends Component {
           fetchProjectMembers={this.props.fetchProjectMembers}
         />
       )
+    },
+    dashboard: {
+      title: "Dashboard",
+      content: <Dashboard loginState={this.props.loginState} />
     }
   };
 
@@ -222,6 +233,22 @@ class PersistentDrawer extends Component {
         <List>
           <ListItem
             button
+            key={"Home"}
+            onClick={() =>
+              this.props.loginState.currentUser.project
+                ? this.loadPage(this.pages.dashboard)
+                : alert("Please create a Project First!") ||
+                  this.loadPage(this.pages.project)
+            }
+          >
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+
+          <ListItem
+            button
             key={"Story Board"}
             onClick={() =>
               this.props.loginState.currentUser.project
@@ -235,6 +262,7 @@ class PersistentDrawer extends Component {
             </ListItemIcon>
             <ListItemText primary="Story Board" />
           </ListItem>
+
           <ListItem
             button
             key={"My Project"}
@@ -245,6 +273,7 @@ class PersistentDrawer extends Component {
             </ListItemIcon>
             <ListItemText primary="My Project" />
           </ListItem>
+
           <ListItem
             button
             key={"My Profile"}
@@ -324,11 +353,7 @@ class PersistentDrawer extends Component {
           >
             <div className={classes.drawerHeader} />
 
-            {this.state.currentPage ? (
-              this.state.currentPage.content
-            ) : (
-              <h3>Use the Menu</h3>
-            )}
+            {this.state.currentPage ? this.state.currentPage.content : <div />}
           </main>
         </div>
       </div>
@@ -337,7 +362,7 @@ class PersistentDrawer extends Component {
 
   componentDidMount() {
     this.props.getProject()
-      ? this.setState({ currentPage: this.pages.storyGrid })
+      ? this.setState({ currentPage: this.pages.dashboard })
       : this.setState({ currentPage: this.pages.project });
   }
 }
