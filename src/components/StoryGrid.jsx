@@ -97,7 +97,20 @@ class GuttersGrid extends Component {
             />
           </div>
           {this.props.statusColumns.map(column => (
-            <Grid key={column.key} className={classes.column} item>
+            <Grid
+              key={column.key}
+              className={classes.column}
+              item
+              onDrop={ev =>
+                this.processUpdateStory(
+                  JSON.parse(ev.dataTransfer.getData("story")),
+                  column.status
+                )
+              }
+              onDragOver={ev => {
+                ev.preventDefault();
+              }}
+            >
               <Paper className={classes.paper}>
                 <Typography
                   gutterBottom
@@ -129,6 +142,86 @@ class GuttersGrid extends Component {
       </Fragment>
     );
   }
+
+  processUpdateStory = (story, status) => {
+    if (story.status !== status) {
+      const stories = this.state.stories;
+      stories.map(existingStory => {
+        if (existingStory.id === story.id) {
+          existingStory.status = status;
+        }
+      });
+      this.setState({ stories: stories });
+
+      story.status = status;
+      this.persistStory(story);
+    }
+  };
+
+  persistStory = story => {
+    var config = {
+      headers: {
+        "content-type": "application/json",
+        authorization: `${this.props.loginState.token}`
+      }
+    };
+
+    const query = `mutation UpdateStory($input: StoryInput!) {
+          updateStory(input: $input) {
+            id
+            name
+            details
+            status
+            points
+            owner {
+              id
+              name
+            }
+            project {
+              id
+              name
+            }
+          }
+        }`;
+
+    const variables = {
+      input: {
+        id: story.id,
+        name: story.name,
+        details: story.details,
+        ownerId: story.owner.id,
+        status: story.status,
+        points: story.points,
+        projectId: story.project.id
+      }
+    };
+
+    let data = {
+      query: query,
+      variables: JSON.stringify(variables)
+    };
+
+    axios
+      .post(`${API_URL}/graphql`, data, config)
+      .then(res => {
+        if (res.data.errors !== undefined) {
+          this.setState({
+            error: "❌ " + res["data"]["errors"][0]["message"]
+          });
+        } else if (res.data.data !== undefined) {
+          console.log(
+            "Story Updated: " + JSON.stringify(res.data.data.updateStory)
+          );
+          this.refreshUpdatedStory(res.data.data.updateStory);
+        }
+      })
+      .catch(err => {
+        console.log("GraphQL Error while updating story: " + err.message);
+        this.setState({
+          error: "❌ " + err.message
+        });
+      });
+  };
 
   appendNewStory = story => {
     console.log("Appending new Story!");
