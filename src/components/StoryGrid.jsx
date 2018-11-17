@@ -88,20 +88,13 @@ class GuttersGrid extends Component {
             >
               <RefreshIcon />
             </Button>
-            <Button
-              variant="fab"
-              mini
-              color="secondary"
-              aria-label="Add"
-              className={classes.button}
-            >
-              <CreateStoryDialog
-                appendNewStory={this.appendNewStory}
-                teamMembers={this.props.teamMembers}
-                statusColumns={this.props.statusColumns}
-                loginState={this.props.loginState}
-              />
-            </Button>
+
+            <CreateStoryDialog
+              appendNewStory={this.appendNewStory}
+              teamMembers={this.props.teamMembers}
+              statusColumns={this.props.statusColumns}
+              loginState={this.props.loginState}
+            />
           </div>
           {this.props.statusColumns.map(column => (
             <Grid key={column.key} className={classes.column} item>
