@@ -250,7 +250,6 @@ class CreateStoryDialog extends Component {
                 value={this.state.storyForm.owner}
               >
                 {this.props.teamMembers().map(member => {
-                  console.log(member.name);
                   return (
                     <MenuItem
                       key={member.id}
