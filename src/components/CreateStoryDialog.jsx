@@ -48,6 +48,9 @@ const styles = theme => ({
   },
   error: {
     color: "red"
+  },
+  button: {
+    margin: theme.spacing.unit
   }
 });
 
@@ -185,7 +188,17 @@ class CreateStoryDialog extends Component {
     const { classes } = this.props;
     return (
       <Fragment>
-        <AddIcon onClick={this.handleClickOpen} />
+        <Button
+          variant="fab"
+          mini
+          color="secondary"
+          aria-label="Add"
+          className={classes.button}
+          onClick={this.handleClickOpen}
+        >
+          <AddIcon />
+        </Button>
+
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -237,7 +250,6 @@ class CreateStoryDialog extends Component {
                 value={this.state.storyForm.owner}
               >
                 {this.props.teamMembers().map(member => {
-                  console.log(member.name);
                   return (
                     <MenuItem
                       key={member.id}

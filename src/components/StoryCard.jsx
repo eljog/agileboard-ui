@@ -60,10 +60,6 @@ class StoryCard extends Component {
     classes: PropTypes.object.isRequired
   };
 
-  dragged = p => {
-    console.log("Dropped : " + p.name);
-  };
-
   render() {
     const { classes } = this.props;
 
@@ -75,7 +71,16 @@ class StoryCard extends Component {
           color="primary"
           classes={{ badge: classes.badge }}
         >
-          <Card className={classes.card}>
+          <Card
+            className={classes.card}
+            draggable={true}
+            onDragStart={ev => {
+              ev.dataTransfer.setData(
+                "story",
+                JSON.stringify(this.props.story)
+              );
+            }}
+          >
             <CardHeader
               avatar={
                 <Avatar aria-label="Recipe" className={classes.avatar}>
