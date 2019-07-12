@@ -1,3 +1,11 @@
 {
-  "postCreateCommand": "while :; do echo "PostCreateCommand Infinite"; sleep 2; done"
+    "name": "Agileboard UI",
+    "appPort": 3000,
+    "extensions": [
+        "dbaeumer.vscode-eslint"
+    ],
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "postCreateCommand": "while :; do echo \"PostCreateCommand Infinite\"; sleep 2; done"
 }
