@@ -4,8 +4,5 @@
     "extensions": [
         "dbaeumer.vscode-eslint"
     ],
-    "settings": {
-        "terminal.integrated.shell.linux": "/bin/bash"
-    },
     "postCreateCommand": "i=0; while :; do echo PostCreateCommand Infinite $i; i=`expr $i + 1`; sleep 2; done"
 }
