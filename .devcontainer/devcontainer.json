@@ -7,5 +7,5 @@
     "settings": {
         "terminal.integrated.shell.linux": "/bin/bash"
     },
-    "postCreateCommand": "npm i"
+    "postCreateCommand": "ls -lart"
 }
