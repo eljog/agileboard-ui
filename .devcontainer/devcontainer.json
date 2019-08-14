@@ -7,5 +7,5 @@
     "settings": {
         "terminal.integrated.shell.linux": "/bin/bash"
     },
-    "postCreateCommand": "cat README.md"
+    "postCreateCommand": "npm install"
 }
