@@ -7,5 +7,5 @@
     "settings": {
         "terminal.integrated.shell.linux": "/bin/bash"
     },
-    "postCreateCommand": "npm install"
+    "postCreateCommand": "while true; do echo \"PCC Eljo\"; sleep 2; done"
 }
