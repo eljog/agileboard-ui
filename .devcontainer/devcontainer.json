@@ -1,15 +1,3 @@
-<<<<<<< Updated upstream
-{
-    "name": "Agileboard UI",
-    "appPort": 3000,
-    "extensions": [
-        "dbaeumer.vscode-eslint"
-    ],
-    "settings": {
-        "terminal.integrated.shell.linux": "/bin/bash"
-    },
-    "postCreateCommand": "npm install"
-=======
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.155.1/containers/javascript-node
 {
@@ -38,5 +26,4 @@
 
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "node"
->>>>>>> Stashed changes
 }
