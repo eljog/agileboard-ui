@@ -7,7 +7,7 @@
     "@material-ui/icons": "3.0.1",
     "@nivo/bar": "^0.50.0",
     "@nivo/pie": "^0.51.0",
-    "axios": "0.18.0",
+    "axios": "0.21.1",
     "react": "^16.5.2",
     "react-apollo": "^2.2.4",
     "react-dom": "^16.5.2",
