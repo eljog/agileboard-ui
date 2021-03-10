@@ -178,10 +178,12 @@ class PersistentDrawer extends Component {
     about: {
       title: "About Us",
       content: (
+        <>
         <h5>
-          Simply Agile! by Eljo (which is not important) - Backed by super
-          powerful Amazon Aurora
+          Simply Agile!
         </h5>
+        <h3><a href="https://www.linkedin.com/in/eljog/">Eljo George</a></h3>
+        </>
       )
     },
     profile: {
